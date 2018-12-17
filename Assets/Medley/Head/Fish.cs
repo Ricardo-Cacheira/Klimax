@@ -17,10 +17,12 @@ public class Fish : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //if (other.gameObject.CompareTag("Water"))
-       // {
-
-        //}
+        Debug.Log("Collided");
+        if (other.gameObject.CompareTag("Boid"))
+        {
+            Debug.Log("It's a Boid");
+            Destroy(other.gameObject);
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -29,16 +31,6 @@ public class Fish : MonoBehaviour
         //{
 
        // }
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log("Collided");
-        if (collision.gameObject.CompareTag("Boid"))
-        {
-            Debug.Log("It's a Boid");
-            Destroy(collision.gameObject);
-        }
     }
 
     
