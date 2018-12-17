@@ -31,6 +31,18 @@ public class Fish : MonoBehaviour
        // }
     }
 
+    void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Collided");
+        if (collision.gameObject.CompareTag("Boid"))
+        {
+            Debug.Log("It's a Boid");
+            Destroy(collision.gameObject);
+        }
+    }
+
+    
+
     void LateUpdate()
     {
         float axisH = Input.GetAxis("Horizontal");

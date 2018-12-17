@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 95588770193257726}
   - component: {fileID: 114584252589697820}
   m_Layer: 0
-  m_Name: Fish
+  m_Name: SnakeHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
