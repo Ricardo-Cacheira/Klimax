@@ -8,7 +8,7 @@ public static class VectorExtension
         return new Vector2(target.x, target.y);
     }
 
-    public static Vector2 xyz(this Vector3 target, int z)
+    public static Vector2 xyz(this Vector2 target, int z)
     {
         return new Vector3(target.x, target.y,z);
     }
@@ -30,10 +30,10 @@ public class Arm : MonoBehaviour
             segments[i].Follow(segments[i - 1].startPoint);
         }
 
-        segments[segments.Count - 1].Follow(anchor.position.xy());
-        for (int i = segments.Count - 2; i >= 0; i--)
-        {
-            segments[i].Follow(segments[i + 1].startPoint);
-        }
+        // segments[segments.Count - 1].Follow(anchor.position.xy());
+        // for (int i = segments.Count - 2; i >= 0; i--)
+        // {
+        //     segments[i].Follow(segments[i + 1].startPoint);
+        // }
     }
 }
