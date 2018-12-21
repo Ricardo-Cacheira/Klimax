@@ -1,18 +1,33 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Fish : MonoBehaviour
 {
+    private int eatenboids = 0;
+    private Vector3 snakebodysize;
+    private float snakebodysizez;
+    public GameObject body;
+    private float currentamount;
+    public GameObject numberofboids;
+
+
     public float speed = 10f;
 
     private Vector3 moveDirection = Vector3.zero;
     CharacterController controller;
     public static Fish thisObj;
+    public GameObject boidsbar;
+    public Text sizetxt;
+    public Text timertxt;
+    float Timer = 0;
 
     void Start()
     {
         thisObj = this.GetComponent<Fish>();
         controller = GetComponent<CharacterController>();
+        snakebodysize = body.GetComponent<Renderer>().bounds.size;
+        snakebodysizez = snakebodysize.z;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -20,6 +35,8 @@ public class Fish : MonoBehaviour
         Debug.Log("Collided");
         if (other.gameObject.CompareTag("Boid"))
         {
+            eatenboids += 1;
+           
             Debug.Log("It's a Boid");
             Destroy(other.gameObject);
         }
@@ -33,10 +50,24 @@ public class Fish : MonoBehaviour
        // }
     }
 
-    
+    private void Update()
+    {
+        if(numberofboids.transform.childCount != 0)
+        {
+            Timer += Time.deltaTime;
+        }
+        if(currentamount < 100)
+        {
+            currentamount = eatenboids;
+        }
+        
+        sizetxt.text = "Snake Size: " + snakebodysizez.ToString("F0");
+        timertxt.text = "Time: " + Timer.ToString("F0") + "s";
+    }
 
     void LateUpdate()
     {
+        boidsbar.GetComponent<Image>().fillAmount = currentamount / 100;
         float axisH = Input.GetAxis("Horizontal");
         float axisV = Input.GetAxis("Vertical");
         float axisY = 0;
@@ -69,7 +100,7 @@ public class Fish : MonoBehaviour
 
         // if (hit.gameObject.name.StartsWith("Player"))
         // {
-        //     RotateCam.isFish = false;
+        //     RotateCam.is<Fish = false;
         //     RotateCam.player = hit.gameObject;
         //     this.GetComponent<Fish>().enabled = false;
         //     hit.gameObject.GetComponent<player>().enabled = true;
