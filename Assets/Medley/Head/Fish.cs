@@ -7,10 +7,10 @@ public class Fish : MonoBehaviour
     private int eatenboids = 0;
     private Vector3 snakebodysize;
     private float snakebodysizez;
-    public GameObject body;
+    //public GameObject body;
     private float currentamount;
     public GameObject numberofboids;
-
+    public GameObject particle;
 
     public float speed = 10f;
 
@@ -26,8 +26,8 @@ public class Fish : MonoBehaviour
     {
         thisObj = this.GetComponent<Fish>();
         controller = GetComponent<CharacterController>();
-        snakebodysize = body.GetComponent<Renderer>().bounds.size;
-        snakebodysizez = snakebodysize.z;
+        //snakebodysize = body.GetComponent<Renderer>().bounds.size;
+        //snakebodysizez = snakebodysize.z;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -38,6 +38,10 @@ public class Fish : MonoBehaviour
             eatenboids += 1;
            
             Debug.Log("It's a Boid");
+
+            GetComponent<AudioSource>().Play();
+            Instantiate(particle, other.transform.position, Quaternion.identity);
+
             Destroy(other.gameObject);
         }
     }

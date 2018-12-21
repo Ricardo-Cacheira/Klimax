@@ -4,28 +4,33 @@ public class Segment : MonoBehaviour
 {
     public Transform anchor;
 
-    public Vector2 startPoint;
-    public Vector2 endPoint;
+    public Vector3 startPoint;
+    public Vector3 endPoint;
 
     private void Start()
     {
         Refresh();
     }
 
-    public void Follow(Vector2 target)
+    public void Follow(Vector3 target)
     {
-        float newRotation = Vector2.SignedAngle(Vector2.right, target - endPoint);
-        transform.localRotation = Quaternion.Euler(0, 0, newRotation);
+        transform.LookAt(target);
 
-        Vector2 newPosition = target - transform.right.xy() * transform.localScale.x / 2;
-        transform.position = newPosition.xyz(0);
+
+        //float newRotation = Vector2.SignedAngle(Vector2.right, target - endPoint);
+        //transform.localRotation = Quaternion.Euler(0, 0, newRotation);
+
+        transform.position= target;
+
+        //Vector2 newPosition = target - transform.right.xy() * transform.localScale.x / 2;
+        //transform.position = newPosition.xyz(0);
         Refresh();
     }
 
     public void Refresh()
     {
-        startPoint = transform.position - transform.right * transform.localScale.x / 2;
-        endPoint = transform.position + transform.right * transform.localScale.x / 2;
+        startPoint = transform.position - transform.forward * transform.localScale.z/1.5f;
+        endPoint = transform.position + transform.forward * transform.localScale.z/1.5f ;
     }
 
     private void OnDrawGizmos()

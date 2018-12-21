@@ -4,41 +4,51 @@ using UnityEngine;
 
 public class GameOfLife : MonoBehaviour
 {
-    public Material deadMaterial;
-    public Material aliveMaterial;
-    public GameObject prefab;
-
-    public bool[,] grid;
-    public GameObject[,] quads;
-
-    public int width = 64;
-    public int height = 64;
+    public Color deadColor = Color.black;
+    public Color aliveColor = Color.white;
+    public int width = 128;
+    public int height = 128;
     public Vector2Int[] start;
 
     [Range(0, 1)]
     public float timeScale = 1;
 
-    [Range(0,20)]
-    public int odds = 0;
+    [Range(0, 20)]
+    public int odds;
+
+    Texture2D destTex;
+    RenderTexture renderTexture;
+
+    private MeshRenderer mesh;
+    Color[] pixels;
+
+    public bool[,] grid;
+
+    int Index(int row, int column) => width * row + column;
+    int Row(int index) => index / width;
+    int Column(int index) => index % width;
+    static int Mod(int i, int n) => (i % n + n) % n;
 
     void Start()
     {
-        quads = new GameObject[height, width];
         grid = new bool[height, width];
-        
+        pixels = new Color[width * height];
+        destTex = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        mesh = GetComponent<MeshRenderer>();
+        mesh.material.mainTexture = destTex;
+
         for (int row = 0; row < height; row++)
         {
             for (int col = 0; col < width; col++)
             {
-                var obj = Instantiate(prefab, new Vector3(row - width / 2, col - height / 2 , 0), Quaternion.identity);
-                obj.GetComponent<MeshRenderer>().material = deadMaterial;
-                quads[row, col] = obj;
+                pixels[Index(row, col)] = deadColor;
+                grid[row, col] = false;
 
-                if(odds > 0)
+                if (odds > 0)
                 {
                     int r = Random.Range(0, odds);
-                    var material = (r == 0) ? aliveMaterial : deadMaterial;
-                    obj.GetComponent<MeshRenderer>().material = material;
+                    var color = (r == 0) ? aliveColor : deadColor;
+                    pixels[Index(row, col)] = color;
                     grid[row, col] = (r == 0);
                 }
             }
@@ -46,8 +56,12 @@ public class GameOfLife : MonoBehaviour
 
         if (odds == 0) foreach (var cell in start)
         {
-            grid[cell.x, cell.y] = true;
+            pixels[Index(cell.y, cell.x)] = aliveColor;
+            grid[cell.y, cell.x] = true;
         }
+
+        destTex.SetPixels(pixels);
+        destTex.Apply();
     }
 
     private void Update()
@@ -57,22 +71,18 @@ public class GameOfLife : MonoBehaviour
 
     void FixedUpdate()
     {
-        var current = grid.Clone() as bool[,];
+        var current = new bool[height, width];
 
         for (int row = 0; row < height; row++)
         {
             for (int col = 0; col < width; col++)
             {
                 var count = NumNeighbours(row, col);
-                bool alive = grid[row, col];
+                var alive = IsAlive(row, col);
 
                 if (alive && count < 2)
                 {
                     current[row, col] = false;
-                }
-                else if (alive && (count == 2 || count == 3))
-                {
-                    current[row, col] = true;
                 }
                 else if (alive && count > 3)
                 {
@@ -82,12 +92,22 @@ public class GameOfLife : MonoBehaviour
                 {
                     current[row, col] = true;
                 }
-
-                quads[row, col].GetComponent<MeshRenderer>().material = (current[row, col]) ? aliveMaterial : deadMaterial;
+                else
+                {
+                    current[row, col] = alive;
+                }
             }
         }
 
+        for (int i = 0; i < current.Length; i++)
+        {
+            pixels[i] = current[Row(i), Column(i)] ? aliveColor : deadColor;
+        }
+
         grid = current;
+
+        destTex.SetPixels(pixels);
+        destTex.Apply();
     }
 
     private int NumNeighbours(int row, int col)
@@ -114,10 +134,5 @@ public class GameOfLife : MonoBehaviour
         var rowIndex = Mod(row, height);
         var colIndex = Mod(col, width);
         return grid[rowIndex, colIndex];
-    }
-
-    static int Mod(int i, int n)
-    {
-        return (i % n + n) % n;
     }
 }
